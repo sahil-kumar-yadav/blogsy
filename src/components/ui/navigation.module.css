@@ -1,0 +1,13 @@
+.nav {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center
+}
+
+.link {
+    padding: 0.25rem 0.5rem
+}
+
+.link:hover {
+    text-decoration: underline
+}
