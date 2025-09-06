@@ -1,13 +1,14 @@
-.nav {
+.navList {
     display: flex;
-    gap: 0.75rem;
-    align-items: center
+    gap: 1rem;
 }
 
-.link {
-    padding: 0.25rem 0.5rem
+.navLink {
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--color-text, #111);
 }
 
-.link:hover {
-    text-decoration: underline
+.navLink:hover {
+    text-decoration: underline;
 }

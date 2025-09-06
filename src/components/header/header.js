@@ -7,13 +7,12 @@ import Navigation from '../ui/navigation';
 
 export default function Header() {
     return (
-        <header className="site-header">
-            <div className="container">
-                <h1 style={{ margin: 0, fontSize: '1.25rem' }}>
-                    <Link href="/">My Blog</Link>
-                </h1>
+        <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md">
+            <div className="max-w-4xl mx-auto flex items-center justify-between p-4">
+                <h1 className="text-2xl font-bold">Next Blog</h1>
                 <Navigation />
             </div>
         </header>
+
     );
 }
