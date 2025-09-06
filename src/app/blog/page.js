@@ -1,16 +1,19 @@
-import { allPosts } from "contentlayer/generated"
 import Link from "next/link"
 import Heading from "../../shared/ui/Heading"
 import Card from "../../shared/ui/Card"
+import { getAllPosts } from "@/lib/mdx"
 
 export const metadata = {
   title: "Blog",
 }
 
+
+export async function generateStaticParams() {
+  return getPostSlugs().map((slug) => ({ slug: slug.replace(/\.mdx$/, "") }))
+}
+
 export default function BlogPage() {
-  const posts = allPosts.sort(
-    (a, b) => new Date(b.date) - new Date(a.date)
-  )
+ const posts = getAllPosts()
 
   return (
     <section className="space-y-6">

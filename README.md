@@ -1,4 +1,4 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 
-npm install react-dom gray-matter remark remark-html
+npm install react react-dom gray-matter remark remark-html
