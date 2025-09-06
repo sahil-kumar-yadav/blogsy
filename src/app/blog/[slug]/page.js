@@ -1,25 +1,25 @@
-import { notFound } from "next/navigation"
 import { allPosts } from "contentlayer/generated"
-import { useMDXComponent } from "next-contentlayer/hooks"
-import Heading from "../../../shared/ui/Heading"
+import { notFound } from "next/navigation"
+import CommentsSection from "../../../features/comments/CommentsSection"
 
-export const generateStaticParams = async () =>
-  allPosts.map((post) => ({ slug: post.slug }))
+export async function generateStaticParams() {
+  return allPosts.map((post) => ({ slug: post.slug }))
+}
 
-export default function BlogPost({ params }) {
+export default function BlogPostPage({ params }) {
   const post = allPosts.find((p) => p.slug === params.slug)
-
   if (!post) return notFound()
 
-  const MDXContent = useMDXComponent(post.body.code)
-
   return (
-    <article className="prose dark:prose-invert max-w-none">
-      <Heading level={1}>{post.title}</Heading>
-      <p className="text-sm text-gray-500 mb-4">
-        {new Date(post.date).toDateString()}
-      </p>
-      <MDXContent />
+    <article className="prose dark:prose-invert">
+      <h1>{post.title}</h1>
+      <p className="text-gray-500">{post.date}</p>
+      <div dangerouslySetInnerHTML={{ __html: post.body.html }} />
+
+      {/* Comments */}
+      <div className="mt-12">
+        <CommentsSection />
+      </div>
     </article>
   )
 }
