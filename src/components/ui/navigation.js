@@ -6,6 +6,8 @@ const navLinks = [
   { href: "/blog", label: "Blog" },
   { href: "/about", label: "About" },
   { href: "/about/projects", label: "Projects" },
+  { href: "/search", label: "Search" },
+  { href: "/newsletter", label: "Newsletter" }, // NEW
 ]
 
 export default function Navigation() {
