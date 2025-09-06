@@ -1,13 +1,64 @@
+"use client"
+import Link from "next/link"
+import { useState } from "react"
+import { getProjects, deleteProject } from "../../../features/admin/projects/dataStore"
+
 export default function AdminProjects() {
-    return (
-        <section className="space-y-6">
-            <h1 className="text-2xl font-bold">Manage Projects</h1>
-            <p className="text-gray-600 dark:text-gray-400">
-                (Future: Load and manage your projects here)
-            </p>
-            <div className="p-6 border rounded-md dark:border-gray-700">
-                🚧 Under Construction
+  const [projects, setProjects] = useState(getProjects())
+
+  const handleDelete = (id) => {
+    deleteProject(id)
+    setProjects(getProjects())
+  }
+
+  return (
+    <section className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Manage Projects</h1>
+        <Link
+          href="/admin/projects/new"
+          className="px-3 py-2 bg-green-600 text-white rounded-md"
+        >
+          ➕ New Project
+        </Link>
+      </div>
+
+      <ul className="space-y-2">
+        {projects.map((project) => (
+          <li key={project.id} className="p-4 border rounded-md dark:border-gray-700">
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="font-semibold">{project.name}</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {project.description}
+                </p>
+              </div>
+              <div className="space-x-2">
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2 py-1 bg-blue-600 text-white rounded-md text-sm"
+                >
+                  View
+                </a>
+                <Link
+                  href={`/admin/projects/${project.id}/edit`}
+                  className="px-2 py-1 bg-yellow-500 text-white rounded-md text-sm"
+                >
+                  Edit
+                </Link>
+                <button
+                  onClick={() => handleDelete(project.id)}
+                  className="px-2 py-1 bg-red-600 text-white rounded-md text-sm"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-        </section>
-    )
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
 }
