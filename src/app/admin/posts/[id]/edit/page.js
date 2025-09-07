@@ -1,7 +1,6 @@
 "use client"
 import { useRouter, useParams } from "next/navigation"
 import { useState, useEffect } from "react"
-import { getPost, updatePost } from "../../../../../features/admin/posts/dataStore"
 
 export default function EditPostPage() {
     const router = useRouter()
@@ -9,15 +8,27 @@ export default function EditPostPage() {
     const postId = params.id
     const [post, setPost] = useState(null)
 
+    // Fetch single post
     useEffect(() => {
-        setPost(getPost(postId))
+        async function loadPost() {
+            const res = await fetch(`/api/posts/${postId}`)
+            if (res.ok) {
+                setPost(await res.json())
+            }
+        }
+        loadPost()
     }, [postId])
 
     if (!post) return <p>Loading...</p>
 
-    const handleSubmit = (e) => {
+    // Update post
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        updatePost(postId, post)
+        await fetch(`/api/posts/${postId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(post),
+        })
         router.push("/admin/posts")
     }
 
@@ -31,15 +42,16 @@ export default function EditPostPage() {
                     onChange={(e) => setPost({ ...post, title: e.target.value })}
                     className="w-full p-2 border rounded-md dark:bg-gray-800"
                 />
-                <textarea
-                    value={post.description}
-                    onChange={(e) => setPost({ ...post, description: e.target.value })}
+                <input
+                    type="text"
+                    value={post.slug}
+                    onChange={(e) => setPost({ ...post, slug: e.target.value })}
                     className="w-full p-2 border rounded-md dark:bg-gray-800"
                 />
                 <textarea
-                    value={post.body}
-                    onChange={(e) => setPost({ ...post, body: e.target.value })}
-                    className="w-full p-2 border rounded-md dark:bg-gray-800 h-40"
+                    value={post.content}
+                    onChange={(e) => setPost({ ...post, content: e.target.value })}
+                    className="w-full p-2 border rounded-md dark:bg-gray-800"
                 />
                 <button
                     type="submit"

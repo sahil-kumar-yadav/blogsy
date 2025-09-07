@@ -1,16 +1,30 @@
-import { allPosts } from "contentlayer/generated"
+import { NextResponse } from "next/server"
+import { getPosts, createPost } from "@/features/posts/service"
 
 export async function GET() {
-  const posts = allPosts
-    .map((p) => ({
-      slug: p.slug,
-      title: p.title,
-      date: p.date,
-      description: p.description,
-    }))
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
+  try {
+    const posts = await getPosts()
+    return NextResponse.json(posts)
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+}
 
-  return new Response(JSON.stringify(posts), {
-    headers: { "Content-Type": "application/json" },
-  })
+export async function POST(req) {
+  try {
+    const body = await req.json()
+    const { title, slug, content } = body
+
+    if (!title || !slug || !content) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      )
+    }
+
+    const post = await createPost({ title, slug, content })
+    return NextResponse.json(post, { status: 201 })
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
 }

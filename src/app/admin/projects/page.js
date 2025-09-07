@@ -1,14 +1,21 @@
 "use client"
 import Link from "next/link"
-import { useState } from "react"
-import { getProjects, deleteProject } from "../../../features/admin/projects/dataStore"
+import { useState, useEffect } from "react"
 
 export default function AdminProjects() {
-  const [projects, setProjects] = useState(getProjects())
+  const [projects, setProjects] = useState([])
 
-  const handleDelete = (id) => {
-    deleteProject(id)
-    setProjects(getProjects())
+  useEffect(() => {
+    async function loadProjects() {
+      const res = await fetch("/api/projects")
+      setProjects(await res.json())
+    }
+    loadProjects()
+  }, [])
+
+  const handleDelete = async (id) => {
+    await fetch(`/api/projects/${id}`, { method: "DELETE" })
+    setProjects(projects.filter((p) => p.id !== id))
   }
 
   return (

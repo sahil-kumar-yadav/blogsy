@@ -1,14 +1,24 @@
 "use client"
 import Link from "next/link"
-import { useState } from "react"
-import { getPosts, deletePost } from "../../../features/admin/posts/dataStore"
+import { useState, useEffect } from "react"
 
 export default function AdminPosts() {
-  const [posts, setPosts] = useState(getPosts())
+  const [posts, setPosts] = useState([])
 
-  const handleDelete = (id) => {
-    deletePost(id)
-    setPosts(getPosts())
+  // Fetch posts from API
+  useEffect(() => {
+    async function loadPosts() {
+      const res = await fetch("/api/posts")
+      const data = await res.json()
+      setPosts(data)
+    }
+    loadPosts()
+  }, [])
+
+  // Delete post
+  const handleDelete = async (id) => {
+    await fetch(`/api/posts/${id}`, { method: "DELETE" })
+    setPosts(posts.filter((p) => p.id !== id))
   }
 
   return (
@@ -30,7 +40,7 @@ export default function AdminPosts() {
               <div>
                 <h2 className="font-semibold">{post.title}</h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {post.date}
+                  slug: {post.slug}
                 </p>
               </div>
               <div className="space-x-2">

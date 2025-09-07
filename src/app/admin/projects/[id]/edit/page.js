@@ -1,7 +1,6 @@
 "use client"
 import { useRouter, useParams } from "next/navigation"
 import { useState, useEffect } from "react"
-import { getProject, updateProject } from "../../../../../features/admin/projects/dataStore"
 
 export default function EditProjectPage() {
     const router = useRouter()
@@ -10,14 +9,24 @@ export default function EditProjectPage() {
     const [project, setProject] = useState(null)
 
     useEffect(() => {
-        setProject(getProject(projectId))
+        async function loadProject() {
+            const res = await fetch(`/api/projects/${projectId}`)
+            if (res.ok) {
+                setProject(await res.json())
+            }
+        }
+        loadProject()
     }, [projectId])
 
     if (!project) return <p>Loading...</p>
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        updateProject(projectId, project)
+        await fetch(`/api/projects/${projectId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(project),
+        })
         router.push("/admin/projects")
     }
 
@@ -29,6 +38,12 @@ export default function EditProjectPage() {
                     type="text"
                     value={project.name}
                     onChange={(e) => setProject({ ...project, name: e.target.value })}
+                    className="w-full p-2 border rounded-md dark:bg-gray-800"
+                />
+                <input
+                    type="text"
+                    value={project.slug}
+                    onChange={(e) => setProject({ ...project, slug: e.target.value })}
                     className="w-full p-2 border rounded-md dark:bg-gray-800"
                 />
                 <textarea

@@ -1,21 +1,20 @@
 "use client"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { createProject } from "../../../../features/admin/projects/dataStore"
 
 export default function NewProjectPage() {
     const [name, setName] = useState("")
+    const [slug, setSlug] = useState("")
     const [description, setDescription] = useState("")
     const [link, setLink] = useState("")
     const router = useRouter()
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        createProject({
-            name,
-            slug: name.toLowerCase().replace(/\s+/g, "-"),
-            description,
-            link,
+        await fetch("/api/projects", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, slug, description, link }),
         })
         router.push("/admin/projects")
     }
@@ -30,6 +29,14 @@ export default function NewProjectPage() {
                     placeholder="Project Name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    className="w-full p-2 border rounded-md dark:bg-gray-800"
+                />
+                <input
+                    type="text"
+                    required
+                    placeholder="Slug"
+                    value={slug}
+                    onChange={(e) => setSlug(e.target.value)}
                     className="w-full p-2 border rounded-md dark:bg-gray-800"
                 />
                 <textarea

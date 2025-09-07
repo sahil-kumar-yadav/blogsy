@@ -144,3 +144,6 @@ docker rmi postgres
 * **Multi-Container Setup**: Consider using `docker-compose` if you're managing multiple services (e.g., Postgres + API server).
 
 ---
+
+
+npx prisma studio

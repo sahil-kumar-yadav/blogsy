@@ -1,22 +1,19 @@
 "use client"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { createPost } from "../../../../features/admin/posts/dataStore"
 
 export default function NewPostPage() {
     const [title, setTitle] = useState("")
-    const [description, setDescription] = useState("")
-    const [body, setBody] = useState("")
+    const [slug, setSlug] = useState("")
+    const [content, setContent] = useState("")
     const router = useRouter()
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        createPost({
-            title,
-            slug: title.toLowerCase().replace(/\s+/g, "-"),
-            date: new Date().toISOString().split("T")[0],
-            description,
-            body,
+        await fetch("/api/posts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, slug, content }),
         })
         router.push("/admin/posts")
     }
@@ -33,18 +30,20 @@ export default function NewPostPage() {
                     onChange={(e) => setTitle(e.target.value)}
                     className="w-full p-2 border rounded-md dark:bg-gray-800"
                 />
-                <textarea
-                    placeholder="Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                <input
+                    type="text"
+                    required
+                    placeholder="Slug"
+                    value={slug}
+                    onChange={(e) => setSlug(e.target.value)}
                     className="w-full p-2 border rounded-md dark:bg-gray-800"
                 />
                 <textarea
                     required
-                    placeholder="Body"
-                    value={body}
-                    onChange={(e) => setBody(e.target.value)}
-                    className="w-full p-2 border rounded-md dark:bg-gray-800 h-40"
+                    placeholder="Content"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    className="w-full p-2 border rounded-md dark:bg-gray-800"
                 />
                 <button
                     type="submit"
