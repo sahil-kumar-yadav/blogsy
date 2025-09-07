@@ -6,9 +6,19 @@ export async function generateStaticParams() {
   return allPosts.map((post) => ({ slug: post.slug }))
 }
 
-export default function BlogPostPage({ params }) {
-  const post = allPosts.find((p) => p.slug === params.slug)
-  if (!post) return notFound()
+// ✅ Helper function to find post
+async function getPost(slug) {
+  return allPosts.find((post) => post.slug === slug)
+}
+
+export default async function BlogPostPage({ params }) {
+  // Await params to get the real object
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug;
+
+  const post = allPosts.find((post) => post.slug === slug);
+
+  if (!post) return notFound();
 
   return (
     <article className="prose dark:prose-invert">
@@ -16,10 +26,9 @@ export default function BlogPostPage({ params }) {
       <p className="text-gray-500">{post.date}</p>
       <div dangerouslySetInnerHTML={{ __html: post.body.html }} />
 
-      {/* Comments */}
       <div className="mt-12">
         <CommentsSection />
       </div>
     </article>
-  )
+  );
 }

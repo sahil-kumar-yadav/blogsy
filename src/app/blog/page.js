@@ -15,7 +15,7 @@ export default function BlogPage() {
   const posts = getAllPosts()
 
   return (
-    <section className="space-y-6 text-gray-800">
+    <section className="space-y-6 text-gray-800 bg-white">
       <Heading level={1}>Blog</Heading>
       <div className="grid gap-6">
         {posts.map((post) => (

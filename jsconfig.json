@@ -2,8 +2,9 @@
   "compilerOptions": {
     "baseUrl": ".", // ✅ Important for "paths" to work
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "contentlayer/generated": ["./.contentlayer/generated"] // ✅ Add this line
     }
   },
-  "include": ["src"] // ✅ Optional but recommended
+  "include": ["src", "contentlayer.config.js"] 
 }
