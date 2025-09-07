@@ -1,18 +1,25 @@
 import { NextResponse } from "next/server"
-import { createCheckoutSession } from "@/features/billing/service"
+import Stripe from "stripe"
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
 export async function POST(req) {
-    try {
-        const { priceId } = await req.json()
-        const session = await createCheckoutSession({
-            priceId,
-            successUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/billing/success`,
-            cancelUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/billing/cancel`,
-        })
+  try {
+    const { priceId, userId } = await req.json()
 
-        return NextResponse.json({ url: session.url })
-    } catch (error) {
-        console.error(error)
-        return NextResponse.json({ error: error.message }, { status: 500 })
-    }
+    // Create Stripe Checkout Session
+    const session = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      payment_method_types: ["card"],
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscribe/success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscribe/cancel`,
+      metadata: { userId },
+    })
+
+    return NextResponse.json({ url: session.url })
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: err.message }, { status: 500 })
+  }
 }
