@@ -1,5 +1,6 @@
 import Card from "@/components/ui/card";
-import SubscribeForm from "@/features/newsletter/SubscribeForm";
+import NewsletterForm from "@/features/newsletter/NewsletterForm";
+import SearchBar from "@/features/search/SearchBar";
 import Button from "@/shared/ui/Button";
 import Heading from "@/shared/ui/Heading";
 
@@ -9,6 +10,7 @@ export default function Home() {
     <>
 
       <section className="space-y-6">
+        <SearchBar />
         <Heading level={1}>Welcome to My Blog</Heading>
         <p className="text-lg text-gray-600 dark:text-gray-300">
           This is a modern, scalable Next.js blog rebuilt from scratch.
@@ -35,7 +37,7 @@ export default function Home() {
         {/* Newsletter CTA */}
         <div className="border-t pt-6">
           <h2 className="text-xl font-semibold">Stay Updated</h2>
-          <SubscribeForm />
+          <NewsletterForm />
         </div>
       </section>
     </>

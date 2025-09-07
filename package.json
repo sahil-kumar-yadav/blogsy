@@ -12,6 +12,7 @@
     "@prisma/client": "^6.15.0",
     "contentlayer": "^0.3.4",
     "gray-matter": "^4.0.3",
+    "minisearch": "^7.1.2",
     "next": "15.5.2",
     "next-contentlayer": "^0.3.4",
     "next-mdx-remote": "^5.0.0",
