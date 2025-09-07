@@ -1,45 +1,105 @@
-import Card from "@/components/ui/card";
-import NewsletterForm from "@/features/newsletter/NewsletterForm";
-import SearchBar from "@/features/search/SearchBar";
-import Button from "@/shared/ui/Button";
-import Heading from "@/shared/ui/Heading";
+import SearchBar from "@/features/search/SearchBar"
+import NewsletterForm from "@/features/newsletter/NewsletterForm"
+import { getPosts } from "@/features/posts/service"
+import { getProjects } from "@/features/projects/service"
+import CommentsSection from "@/features/comments/CommentsSection"
+import Heading from "@/shared/ui/Heading"
+import Button from "@/shared/ui/Button"
 
+export default async function Home() {
+  // Fetch latest posts & projects from Prisma
+  const posts = await getPosts()
+  const projects = await getProjects()
 
-export default function Home() {
   return (
-    <>
-
-      <section className="space-y-6">
-        <SearchBar />
-        <Heading level={1}>Welcome to My Blog</Heading>
+    <main className="max-w-4xl mx-auto px-4 py-12 space-y-16">
+      {/* Hero Section */}
+      <section className="space-y-4 text-center">
+        <Heading level={1}>Welcome to My Blog 🚀</Heading>
         <p className="text-lg text-gray-600 dark:text-gray-300">
-          This is a modern, scalable Next.js blog rebuilt from scratch.
+          Sharing posts, projects, and ideas about web development, design, and
+          beyond.
         </p>
-
-        <Card>
-          <Heading level={2}>Try Buttons</Heading>
-          <div className="flex gap-4 mt-4">
-            <Button variant="primary">Primary</Button>
-            <Button variant="secondary">Secondary</Button>
-            <Button variant="outline">Outline</Button>
-          </div>
-        </Card>
-
       </section>
 
+      {/* Search Feature */}
+      <section>
+        <Heading level={2} className="mb-4">
+          Search
+        </Heading>
+        <SearchBar />
+      </section>
 
-      <section className="space-y-8">
-        <h1 className="text-3xl font-bold">Welcome to my Blog 🚀</h1>
+      {/* Newsletter Signup */}
+      <section className="space-y-4">
+        <Heading level={2}>Subscribe to the Newsletter</Heading>
         <p className="text-gray-600 dark:text-gray-400">
-          Sharing insights on web development, projects, and more.
+          Stay up to date with the latest posts and projects.
         </p>
-
-        {/* Newsletter CTA */}
-        <div className="border-t pt-6">
-          <h2 className="text-xl font-semibold">Stay Updated</h2>
-          <NewsletterForm />
-        </div>
+        <NewsletterForm />
       </section>
-    </>
-  );
+
+      {/* Recent Posts */}
+      <section className="space-y-4">
+        <Heading level={2}>Latest Posts</Heading>
+        <ul className="space-y-3">
+          {posts.slice(0, 3).map((post) => (
+            <li
+              key={post.id}
+              className="p-4 border rounded-md dark:border-gray-700"
+            >
+              <a
+                href={`/blog/${post.slug}`}
+                className="font-semibold hover:underline"
+              >
+                {post.title}
+              </a>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {post.content.slice(0, 100)}...
+              </p>
+              <div className="mt-2">
+                <Button asChild size="sm" variant="outline">
+                  <a href={`/blog/${post.slug}`}>Read More</a>
+                </Button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Featured Projects */}
+      <section className="space-y-4">
+        <Heading level={2}>Projects</Heading>
+        <ul className="space-y-3">
+          {projects.slice(0, 3).map((project) => (
+            <li
+              key={project.id}
+              className="p-4 border rounded-md dark:border-gray-700"
+            >
+              <a
+                href={`/about/projects/${project.slug}`}
+                className="font-semibold hover:underline"
+              >
+                {project.title}
+              </a>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {project.description.slice(0, 100)}...
+              </p>
+              <div className="mt-2">
+                <Button asChild size="sm" variant="outline">
+                  <a href={`/about/projects/${project.slug}`}>View Project</a>
+                </Button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Comments Teaser */}
+      <section className="space-y-4">
+        <Heading level={2}>Community Buzz</Heading>
+        <CommentsSection postId={posts[0]?.id} />
+      </section>
+    </main>
+  )
 }
