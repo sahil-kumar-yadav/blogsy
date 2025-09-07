@@ -7,29 +7,28 @@ export const metadata = {
   title: "Blog",
 }
 
-
 export async function generateStaticParams() {
   return getPostSlugs().map((slug) => ({ slug: slug.replace(/\.mdx$/, "") }))
 }
 
 export default function BlogPage() {
- const posts = getAllPosts()
+  const posts = getAllPosts()
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-6 text-gray-800">
       <Heading level={1}>Blog</Heading>
       <div className="grid gap-6">
         {posts.map((post) => (
           <Card key={post.slug}>
             <Link href={`/blog/${post.slug}`}>
-              <h2 className="text-2xl font-semibold hover:underline">
+              <h2 className="text-2xl font-semibold text-blue-600 hover:underline">
                 {post.title}
               </h2>
             </Link>
             <p className="text-sm text-gray-500">
               {new Date(post.date).toDateString()}
             </p>
-            <p className="mt-2 text-gray-700 dark:text-gray-300">
+            <p className="mt-2 text-gray-700">
               {post.description}
             </p>
           </Card>
