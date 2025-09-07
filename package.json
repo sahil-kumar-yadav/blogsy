@@ -9,11 +9,13 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@prisma/client": "^6.15.0",
     "contentlayer": "^0.3.4",
     "gray-matter": "^4.0.3",
     "next": "15.5.2",
     "next-contentlayer": "^0.3.4",
     "next-mdx-remote": "^5.0.0",
+    "prisma": "^6.15.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.1",
     "rehype-autolink-headings": "^7.1.0",
