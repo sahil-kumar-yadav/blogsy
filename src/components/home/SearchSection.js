@@ -1,0 +1,16 @@
+import Heading from "@/shared/ui/Heading"
+import Card from "@/shared/ui/Card"
+import SearchBar from "@/features/search/SearchBar"
+
+export default function SearchSection() {
+    return (
+        <section>
+            <Card className="p-6">
+                <Heading level={2} className="mb-4">
+                    Search
+                </Heading>
+                <SearchBar />
+            </Card>
+        </section>
+    )
+}
