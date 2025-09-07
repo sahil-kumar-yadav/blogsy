@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@contentlayer/react": "^0.0.9",
     "@prisma/client": "^6.15.0",
     "contentlayer": "^0.3.4",
     "gray-matter": "^4.0.3",
