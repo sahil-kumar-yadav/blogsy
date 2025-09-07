@@ -8,12 +8,14 @@ export default function AdminLayout({ children }) {
       {/* Sidebar */}
       <aside className="w-64 bg-gray-900 text-white p-6">
         <h2 className="text-xl font-bold mb-6">Admin</h2>
-        <nav className="space-y-2">
-          <a href="/admin" className="block hover:underline">Dashboard</a>
-          <a href="/admin/posts" className="block hover:underline">Posts</a>
-          <a href="/admin/projects" className="block hover:underline">Projects</a>
-          <a href="/admin/newsletter" className="block hover:underline">Newsletter</a>
+        <nav className="space-x-4">
+          <a href="/admin/posts">Posts</a>
+          <a href="/admin/projects">Projects</a>
+          <a href="/admin/comments">Comments</a>
+          <a href="/admin/newsletter">Newsletter</a>
+          <a href="/admin/billing">Billing</a>
         </nav>
+
       </aside>
 
       {/* Main Content */}
