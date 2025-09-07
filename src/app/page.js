@@ -7,18 +7,16 @@ import Heading from "@/shared/ui/Heading"
 import Button from "@/shared/ui/Button"
 
 export default async function Home() {
-  // Fetch latest posts & projects from Prisma
   const posts = await getPosts()
   const projects = await getProjects()
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-12 space-y-16">
+    <main className="max-w-4xl mx-auto px-4 py-12 space-y-16 text-gray-800 bg-white">
       {/* Hero Section */}
       <section className="space-y-4 text-center">
         <Heading level={1}>Welcome to My Blog 🚀</Heading>
-        <p className="text-lg text-gray-600 dark:text-gray-300">
-          Sharing posts, projects, and ideas about web development, design, and
-          beyond.
+        <p className="text-lg text-gray-600">
+          Sharing posts, projects, and ideas about web development, design, and beyond.
         </p>
       </section>
 
@@ -33,7 +31,7 @@ export default async function Home() {
       {/* Newsletter Signup */}
       <section className="space-y-4">
         <Heading level={2}>Subscribe to the Newsletter</Heading>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-gray-600">
           Stay up to date with the latest posts and projects.
         </p>
         <NewsletterForm />
@@ -44,17 +42,11 @@ export default async function Home() {
         <Heading level={2}>Latest Posts</Heading>
         <ul className="space-y-3">
           {posts.slice(0, 3).map((post) => (
-            <li
-              key={post.id}
-              className="p-4 border rounded-md dark:border-gray-700"
-            >
-              <a
-                href={`/blog/${post.slug}`}
-                className="font-semibold hover:underline"
-              >
+            <li key={post.id} className="p-4 border border-gray-200 rounded-md bg-white">
+              <a href={`/blog/${post.slug}`} className="font-semibold text-blue-600 hover:underline">
                 {post.title}
               </a>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-gray-600 mt-1">
                 {post.content.slice(0, 100)}...
               </p>
               <div className="mt-2">
@@ -72,17 +64,11 @@ export default async function Home() {
         <Heading level={2}>Projects</Heading>
         <ul className="space-y-3">
           {projects.slice(0, 3).map((project) => (
-            <li
-              key={project.id}
-              className="p-4 border rounded-md dark:border-gray-700"
-            >
-              <a
-                href={`/about/projects/${project.slug}`}
-                className="font-semibold hover:underline"
-              >
+            <li key={project.id} className="p-4 border border-gray-200 rounded-md bg-white">
+              <a href={`/about/projects/${project.slug}`} className="font-semibold text-blue-600 hover:underline">
                 {project.title}
               </a>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-gray-600 mt-1">
                 {project.description.slice(0, 100)}...
               </p>
               <div className="mt-2">

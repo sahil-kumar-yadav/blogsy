@@ -40,24 +40,24 @@ export default function CommentBox({ onCommentAdded }) {
                 placeholder="Your name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full p-2 border rounded-md dark:bg-gray-800"
+                className="w-full p-2 border border-gray-300 rounded-md bg-white text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <textarea
                 required
                 placeholder="Your comment..."
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                className="w-full p-2 border rounded-md dark:bg-gray-800"
+                className="w-full p-2 border border-gray-300 rounded-md bg-white text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
             >
                 {loading ? "Posting..." : "Post Comment"}
             </button>
 
-            {error && <p className="text-red-600">{error}</p>}
+            {error && <p className="text-red-600 text-sm">{error}</p>}
         </form>
     )
 }
