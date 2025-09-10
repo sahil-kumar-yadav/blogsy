@@ -1,15 +1,16 @@
 "use client"
+
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import { getPosts, deletePost } from "@/features/posts/service"
 
 export default function AdminPosts() {
   const [posts, setPosts] = useState([])
 
-  // Fetch posts from API
+  // Fetch posts from Supabase
   useEffect(() => {
     async function loadPosts() {
-      const res = await fetch("/api/posts")
-      const data = await res.json()
+      const data = await getPosts()
       setPosts(data)
     }
     loadPosts()
@@ -17,8 +18,8 @@ export default function AdminPosts() {
 
   // Delete post
   const handleDelete = async (id) => {
-    await fetch(`/api/posts/${id}`, { method: "DELETE" })
-    setPosts(posts.filter((p) => p.id !== id))
+    await deletePost(id)
+    setPosts((prev) => prev.filter((p) => p.id !== id))
   }
 
   return (
@@ -33,34 +34,43 @@ export default function AdminPosts() {
         </Link>
       </div>
 
-      <ul className="space-y-2">
-        {posts.map((post) => (
-          <li key={post.id} className="p-4 border rounded-md dark:border-gray-700">
-            <div className="flex justify-between items-center">
-              <div>
-                <h2 className="font-semibold">{post.title}</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  slug: {post.slug}
-                </p>
+      {posts.length === 0 ? (
+        <p className="text-gray-600 dark:text-gray-400">
+          No posts yet. Create your first one!
+        </p>
+      ) : (
+        <ul className="space-y-2">
+          {posts.map((post) => (
+            <li
+              key={post.id}
+              className="p-4 border rounded-md dark:border-gray-700"
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <h2 className="font-semibold">{post.title}</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    slug: {post.slug}
+                  </p>
+                </div>
+                <div className="space-x-2">
+                  <Link
+                    href={`/admin/posts/${post.id}/edit`}
+                    className="px-2 py-1 bg-yellow-500 text-white rounded-md text-sm"
+                  >
+                    Edit
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(post.id)}
+                    className="px-2 py-1 bg-red-600 text-white rounded-md text-sm"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-              <div className="space-x-2">
-                <Link
-                  href={`/admin/posts/${post.id}/edit`}
-                  className="px-2 py-1 bg-yellow-500 text-white rounded-md text-sm"
-                >
-                  Edit
-                </Link>
-                <button
-                  onClick={() => handleDelete(post.id)}
-                  className="px-2 py-1 bg-red-600 text-white rounded-md text-sm"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   )
 }

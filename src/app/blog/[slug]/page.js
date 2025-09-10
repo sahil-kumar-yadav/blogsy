@@ -1,33 +1,26 @@
-import { allPosts } from "contentlayer/generated";
-import { notFound, redirect } from "next/navigation";
-import CommentsSection from "../../../features/comments/CommentsSection";
-import MDXRenderer from "../../../components/MDXRenderer";
-import { userHasActiveSubscription } from "@/features/billing/service";
-import Heading from "@/shared/ui/Heading";
-import Card from "@/shared/ui/Card";
-import Link from "next/link";
-
-// ✅ Static params for pre-render
-export async function generateStaticParams() {
-  return allPosts.map((post) => ({ slug: post.slug.replace(/\.mdx$/, "") }));
-}
+import { notFound, redirect } from "next/navigation"
+import CommentsSection from "@/features/comments/CommentsSection"
+import MDXRenderer from "@/components/MDXRenderer"
+import { userHasActiveSubscription } from "@/features/billing/service"
+import { getPostBySlug } from "@/features/posts/service"
+import Heading from "@/shared/ui/Heading"
+import Card from "@/shared/ui/Card"
+import Link from "next/link"
 
 export default async function BlogPostPage({ params }) {
-  const slug = params.slug;
-  const post = allPosts.find(
-    (post) => post.slug.replace(/\.mdx$/, "") === slug
-  );
+  const slug = params.slug
+  const post = await getPostBySlug(slug)
 
-  if (!post) return notFound();
+  if (!post) return notFound()
 
   // 🔒 Premium gating logic
   if (post.premium) {
     // TODO: Replace with real session.user.id once Auth is wired in
-    const userId = null;
-    const hasAccess = await userHasActiveSubscription(userId);
+    const userId = null
+    const hasAccess = await userHasActiveSubscription(userId)
 
     if (!hasAccess) {
-      redirect("/subscribe");
+      redirect("/subscribe")
     }
   }
 
@@ -47,7 +40,7 @@ export default async function BlogPostPage({ params }) {
         </Heading>
         <div className="flex justify-center items-center gap-4 text-sm text-gray-500">
           <time>
-            {new Date(post.date).toLocaleDateString("en-US", {
+            {new Date(post.created_at).toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",
               day: "numeric",
@@ -63,7 +56,7 @@ export default async function BlogPostPage({ params }) {
 
       {/* Post Body */}
       <div className="prose prose-lg max-w-none dark:prose-invert">
-        <MDXRenderer code={post.body.code} />
+        <MDXRenderer code={post.content} />
       </div>
 
       {/* Comments */}
@@ -71,7 +64,7 @@ export default async function BlogPostPage({ params }) {
         <Heading level={3} className="mb-4">
           Comments
         </Heading>
-        <CommentsSection />
+        <CommentsSection postId={post.id} />
       </Card>
 
       {/* Back to Blog */}
@@ -84,5 +77,5 @@ export default async function BlogPostPage({ params }) {
         </Link>
       </div>
     </article>
-  );
+  )
 }

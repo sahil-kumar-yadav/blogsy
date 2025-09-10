@@ -1,14 +1,14 @@
-import Link from "next/link";
-import Heading from "../../shared/ui/Heading";
-import Card from "../../shared/ui/Card";
-import { getAllPosts } from "@/lib/mdx";
+import Link from "next/link"
+import Heading from "@/shared/ui/Heading"
+import Card from "@/shared/ui/Card"
+import { getPosts } from "@/features/posts/service"
 
 export const metadata = {
   title: "Blog",
-};
+}
 
-export default function BlogPage() {
-  const posts = getAllPosts();
+export default async function BlogPage() {
+  const posts = await getPosts()
 
   return (
     <section className="site-main space-y-10">
@@ -29,7 +29,10 @@ export default function BlogPage() {
               <Link href={`/blog/${post.slug}`}>
                 <div className="overflow-hidden rounded-lg">
                   <img
-                    src={post.image || "https://source.unsplash.com/800x400/?blog,writing"}
+                    src={
+                      post.image ||
+                      "https://source.unsplash.com/800x400/?blog,writing"
+                    }
                     alt={post.title}
                     className="w-full h-48 object-cover transform transition-transform duration-300 hover:scale-105"
                   />
@@ -44,7 +47,7 @@ export default function BlogPage() {
                   </h2>
                 </Link>
                 <p className="text-sm text-[var(--color-muted)]">
-                  {new Date(post.date).toLocaleDateString("en-US", {
+                  {new Date(post.created_at).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "short",
                     day: "numeric",
@@ -59,5 +62,5 @@ export default function BlogPage() {
         ))}
       </div>
     </section>
-  );
+  )
 }
