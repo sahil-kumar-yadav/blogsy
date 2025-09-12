@@ -1,12 +1,20 @@
-// src/features/newsletter/service.js
-import { supabase } from "@/utils/supabase/client"
+import supabase from "@/core/supabase/client"
 
-// Subscribe user (add email to newsletter_subscribers table)
-export async function subscribeNewsletter(email) {
-  if (!email) throw new Error("Email is required")
-
+// Get all subscribers
+export async function getSubscribers() {
   const { data, error } = await supabase
-    .from("newsletter_subscribers")
+    .from("newsletter")
+    .select("*")
+    .order("created_at", { ascending: false })
+
+  if (error) throw new Error(error.message)
+  return data
+}
+
+// Add subscriber
+export async function addSubscriber(email) {
+  const { data, error } = await supabase
+    .from("newsletter")
     .insert([{ email }])
     .select()
     .single()
@@ -15,26 +23,13 @@ export async function subscribeNewsletter(email) {
   return data
 }
 
-// Unsubscribe user (remove email)
-export async function unsubscribeNewsletter(email) {
-  if (!email) throw new Error("Email is required")
-
+// Delete subscriber
+export async function deleteSubscriber(id) {
   const { error } = await supabase
-    .from("newsletter_subscribers")
+    .from("newsletter")
     .delete()
-    .eq("email", email)
+    .eq("id", id)
 
   if (error) throw new Error(error.message)
   return true
-}
-
-// Get all subscribers (for Admin dashboard)
-export async function getSubscribers() {
-  const { data, error } = await supabase
-    .from("newsletter_subscribers")
-    .select("*")
-    .order("created_at", { ascending: false })
-
-  if (error) throw new Error(error.message)
-  return data
 }

@@ -7,12 +7,23 @@ export default function NewPostPage() {
   const [title, setTitle] = useState("")
   const [slug, setSlug] = useState("")
   const [content, setContent] = useState("")
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    await createPost({ title, slug, content })
-    router.push("/admin/posts")
+    setError(null)
+    setLoading(true)
+
+    try {
+      await createPost({ title, slug, content })
+      router.push("/admin/posts")
+    } catch (err) {
+      setError("Failed to create post. Please try again.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -44,10 +55,12 @@ export default function NewPostPage() {
         />
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md"
+          disabled={loading}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md disabled:opacity-50"
         >
-          Save
+          {loading ? "Saving..." : "Save"}
         </button>
+        {error && <p className="text-red-600 text-sm">{error}</p>}
       </form>
     </section>
   )

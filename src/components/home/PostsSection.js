@@ -1,33 +1,127 @@
-import Heading from "@/shared/ui/Heading"
-import Card from "@/shared/ui/Card"
-import Button from "@/shared/ui/Button"
-import Link from "next/link"
+"use client"
 
-export default function PostsSection({ posts }) {
-    return (
-        <section className="space-y-6">
-            <Heading level={2}>Latest Posts</Heading>
-            <div className="grid gap-6 sm:grid-cols-2">
-                {posts.slice(0, 3).map((post) => (
-                    <Card key={post.id} className="transition-transform hover:scale-[1.02] hover:shadow-md">
-                        <Link
-                            href={`/blog/${post.slug}`}
-                            className="text-2xl font-semibold text-blue-600 hover:underline"
-                        >
-                            {post.title}
-                        </Link>
-                        <p className="text-sm text-gray-500 mt-1">
-                            {new Date(post.date).toDateString()}
-                        </p>
-                        <p className="mt-2 text-gray-700">{post.content.slice(0, 100)}...</p>
-                        <div className="mt-4">
-                            <Button asChild variant="outline">
-                                <Link href={`/blog/${post.slug}`}>Read More</Link>
-                            </Button>
-                        </div>
-                    </Card>
-                ))}
-            </div>
-        </section>
-    )
+import { useEffect, useState } from "react"
+import { Card } from "@/shared/ui/Card"
+import { Heading } from "@/shared/ui/Heading"
+import { Button } from "@/shared/ui/Button"
+import {
+  getCustomers,
+  getSubscriptions,
+  updateSubscription,
+} from "@/features/billing/service"
+
+export default function BillingPage() {
+  const [customers, setCustomers] = useState([])
+  const [subscriptions, setSubscriptions] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  async function loadData() {
+    setLoading(true)
+    const [c, s] = await Promise.all([getCustomers(), getSubscriptions()])
+    setCustomers(c)
+    setSubscriptions(s)
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  async function handleAction(id, action) {
+    await updateSubscription(id, action)
+    await loadData()
+  }
+
+  if (loading) {
+    return <p className="text-gray-600 dark:text-gray-400">Loading billing data...</p>
+  }
+
+  return (
+    <div className="space-y-8">
+      <Heading level={1}>Billing Management</Heading>
+
+      {/* Customers */}
+      <Card>
+        <Heading level={2}>Customers</Heading>
+        {customers.length === 0 ? (
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            No customers found.
+          </p>
+        ) : (
+          <table className="w-full mt-4 text-sm">
+            <thead>
+              <tr className="border-b text-left">
+                <th>Email</th>
+                <th>Stripe ID</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              {customers.map((c) => (
+                <tr key={c.id} className="border-b">
+                  <td>{c.email}</td>
+                  <td className="text-gray-500">{c.stripeId}</td>
+                  <td>{new Date(c.createdAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </Card>
+
+      {/* Subscriptions */}
+      <Card>
+        <Heading level={2}>Subscriptions</Heading>
+        {subscriptions.length === 0 ? (
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            No subscriptions found.
+          </p>
+        ) : (
+          <table className="w-full mt-4 text-sm">
+            <thead>
+              <tr className="border-b text-left">
+                <th>Customer</th>
+                <th>Stripe ID</th>
+                <th>Status</th>
+                <th>Price</th>
+                <th>Period End</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {subscriptions.map((s) => (
+                <tr key={s.id} className="border-b">
+                  <td>{s.customer?.email}</td>
+                  <td className="text-gray-500">{s.stripeId}</td>
+                  <td>{s.status}</td>
+                  <td>{s.priceId}</td>
+                  <td>
+                    {s.currentPeriodEnd
+                      ? new Date(s.currentPeriodEnd).toLocaleDateString()
+                      : "-"}
+                  </td>
+                  <td className="space-x-2">
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleAction(s.id, "cancel")}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => handleAction(s.id, "refresh")}
+                    >
+                      Refresh
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </Card>
+    </div>
+  )
 }

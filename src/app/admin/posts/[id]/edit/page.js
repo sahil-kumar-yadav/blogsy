@@ -7,24 +7,49 @@ export default function EditPostPage() {
   const router = useRouter()
   const params = useParams()
   const postId = params.id
+
   const [post, setPost] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState(null)
 
   // Fetch single post from Supabase
   useEffect(() => {
     async function loadPost() {
-      const data = await getPost(postId)
-      setPost(data)
+      try {
+        const data = await getPost(postId)
+        setPost(data)
+      } catch (err) {
+        setError("Failed to load post.")
+      } finally {
+        setLoading(false)
+      }
     }
-    loadPost()
+    if (postId) loadPost()
   }, [postId])
 
-  if (!post) return <p>Loading...</p>
+  if (loading) return <p>Loading...</p>
+  if (error) return <p className="text-red-600">{error}</p>
+  if (!post) return <p>Post not found.</p>
 
   // Update post
   const handleSubmit = async (e) => {
     e.preventDefault()
-    await updatePost(postId, post)
-    router.push("/admin/posts")
+    setSaving(true)
+    setError(null)
+
+    try {
+      await updatePost(postId, {
+        title: post.title,
+        slug: post.slug,
+        content: post.content,
+      })
+      router.push("/admin/posts")
+    } catch (err) {
+      setError("Failed to update post. Please try again.")
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -50,10 +75,12 @@ export default function EditPostPage() {
         />
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md"
+          disabled={saving}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md disabled:opacity-50"
         >
-          Update
+          {saving ? "Updating..." : "Update"}
         </button>
+        {error && <p className="text-red-600 text-sm">{error}</p>}
       </form>
     </section>
   )

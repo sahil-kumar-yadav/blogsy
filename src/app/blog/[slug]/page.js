@@ -1,6 +1,5 @@
 import { notFound, redirect } from "next/navigation"
 import CommentsSection from "@/features/comments/CommentsSection"
-import MDXRenderer from "@/components/MDXRenderer"
 import { userHasActiveSubscription } from "@/features/billing/service"
 import { getPostBySlug } from "@/features/posts/service"
 import Heading from "@/shared/ui/Heading"
@@ -56,7 +55,11 @@ export default async function BlogPostPage({ params }) {
 
       {/* Post Body */}
       <div className="prose prose-lg max-w-none dark:prose-invert">
-        <MDXRenderer code={post.content} />
+        {post.content ? (
+          <div dangerouslySetInnerHTML={{ __html: post.content }} />
+        ) : (
+          <p className="text-gray-600 italic">No content available.</p>
+        )}
       </div>
 
       {/* Comments */}

@@ -4,12 +4,15 @@ import supabase from "@/core/supabase/client"
 export async function getComments(postId) {
   const { data, error } = await supabase
     .from("comments")
-    .select("*")
+    .select("id, post_id, author, content, created_at, updated_at")
     .eq("post_id", postId)
     .order("created_at", { ascending: false })
 
-  if (error) throw new Error(error.message)
-  return data
+  if (error) {
+    console.error("❌ Error fetching comments:", error.message)
+    return []
+  }
+  return data || []
 }
 
 // Get single comment
@@ -20,7 +23,10 @@ export async function getComment(id) {
     .eq("id", id)
     .single()
 
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error("❌ Error fetching comment:", error.message)
+    return null
+  }
   return data
 }
 
@@ -28,11 +34,21 @@ export async function getComment(id) {
 export async function createComment({ postId, author, content }) {
   const { data, error } = await supabase
     .from("comments")
-    .insert([{ post_id: postId, author, content }])
+    .insert([
+      {
+        post_id: postId,
+        author,
+        content,
+        created_at: new Date(),
+      },
+    ])
     .select()
     .single()
 
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error("❌ Error creating comment:", error.message)
+    return null
+  }
   return data
 }
 
@@ -45,7 +61,10 @@ export async function updateComment(id, { content }) {
     .select()
     .single()
 
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error("❌ Error updating comment:", error.message)
+    return null
+  }
   return data
 }
 
@@ -56,6 +75,9 @@ export async function deleteComment(id) {
     .delete()
     .eq("id", id)
 
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error("❌ Error deleting comment:", error.message)
+    return false
+  }
   return true
 }

@@ -1,39 +1,46 @@
 "use client"
 import { useEffect, useState } from "react"
+import { getComments } from "./service"
 
-export default function CommentList({ newComment }) {
-    const [comments, setComments] = useState([])
+export default function CommentList({ postId, newComment }) {
+  const [comments, setComments] = useState([])
+  const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        async function fetchComments() {
-            const res = await fetch("/api/comments")
-            const data = await res.json()
-            setComments(data)
-        }
-        fetchComments()
-    }, [])
+  useEffect(() => {
+    async function fetchComments() {
+      setLoading(true)
+      const data = await getComments(postId)
+      setComments(data)
+      setLoading(false)
+    }
+    if (postId) fetchComments()
+  }, [postId])
 
-    // Append new comment when added
-    useEffect(() => {
-        if (newComment) {
-            setComments((prev) => [...prev, newComment])
-        }
-    }, [newComment])
+  // Append new comment optimistically
+  useEffect(() => {
+    if (newComment) {
+      setComments((prev) => [newComment, ...prev])
+    }
+  }, [newComment])
 
-    return (
-        <div className="space-y-4">
-            {comments.length === 0 && (
-                <p className="text-gray-600 dark:text-gray-400">No comments yet.</p>
-            )}
-            {comments.map((c) => (
-                <div
-                    key={c.id}
-                    className="p-3 border rounded-md dark:border-gray-700"
-                >
-                    <p className="font-semibold">{c.name}</p>
-                    <p>{c.text}</p>
-                </div>
-            ))}
+  if (loading) {
+    return <p className="text-gray-500">Loading comments...</p>
+  }
+
+  return (
+    <div className="space-y-4">
+      {comments.length === 0 && (
+        <p className="text-gray-600 dark:text-gray-400">No comments yet.</p>
+      )}
+      {comments.map((c) => (
+        <div
+          key={c.id}
+          className="p-3 border rounded-md dark:border-gray-700"
+        >
+          <p className="font-semibold">{c.author}</p>
+          <p>{c.content}</p>
         </div>
-    )
+      ))}
+    </div>
+  )
 }
