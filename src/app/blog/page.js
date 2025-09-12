@@ -29,10 +29,7 @@ export default async function BlogPage() {
               <Link href={`/blog/${post.slug}`}>
                 <div className="overflow-hidden rounded-lg">
                   <img
-                    src={
-                      post.image ||
-                      "https://source.unsplash.com/800x400/?blog,writing"
-                    }
+                    src={`/${post.slug}.jpg`}
                     alt={post.title}
                     className="w-full h-48 object-cover transform transition-transform duration-300 hover:scale-105"
                   />

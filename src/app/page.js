@@ -17,7 +17,7 @@ export default async function Home() {
       <HeroSection />
       <SearchSection />
       <NewsletterSection />
-      <PostsSection posts={posts} />
+      {/* <PostsSection posts={posts} /> */}
       <ProjectsSection projects={projects} />
       <CommentsTeaser postId={posts[0]?.id} />
     </main>

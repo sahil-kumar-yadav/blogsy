@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { getProjects } from "@/features/projects/service"
+import ButtonComponent from "@/shared/ui/Button"
 
 export default function PublicProjects() {
     const [projects, setProjects] = useState([])
@@ -20,6 +21,11 @@ export default function PublicProjects() {
     if (loading) {
         return <p className="text-gray-600 dark:text-gray-400">Loading projects...</p>
     }
+
+    const handleClick = (url) => {
+        window.open(url, '_blank', 'noopener,noreferrer');
+    };
+
 
     return (
         <section className="space-y-6">
@@ -44,14 +50,22 @@ export default function PublicProjects() {
                                     </p>
                                 </div>
                                 <div>
-                                    <a
+                                    <ButtonComponent
+                                        variant="secondary"
+                                        size="sm"
+                                        onClick={() => handleClick()}
+                                    >
+                                        View
+
+                                    </ButtonComponent>
+                                    {/* <a
                                         href={project.link}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm"
                                     >
                                         View
-                                    </a>
+                                    </a> */}
                                 </div>
                             </div>
                         </li>

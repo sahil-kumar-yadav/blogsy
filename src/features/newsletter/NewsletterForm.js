@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { addSubscriber } from "@/features/newsletter/service"; // <-- use service
 
 export default function NewsletterForm() {
   const [email, setEmail] = useState("");
@@ -11,25 +12,13 @@ export default function NewsletterForm() {
     setStatus(null);
 
     try {
-      const res = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setStatus("success");
-        setMessage("✅ Thanks for subscribing!");
-        setEmail("");
-      } else {
-        setStatus("error");
-        setMessage(data.error || "Subscription failed.");
-      }
+      await addSubscriber(email); // <-- call Supabase directly
+      setStatus("success");
+      setMessage("✅ Thanks for subscribing!");
+      setEmail("");
     } catch (error) {
       setStatus("error");
-      setMessage("Something went wrong. Please try again.");
+      setMessage(error.message || "Subscription failed.");
     }
   };
 

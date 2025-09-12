@@ -1,49 +1,39 @@
 "use client"
 import { useEffect, useState } from "react"
-import { getSubscribers, deleteSubscriber } from "@/features/newsletter/service"
 
 export default function AdminNewsletter() {
   const [subs, setSubs] = useState([])
-  const [loading, setLoading] = useState(true)
+
+  async function loadSubs() {
+    const res = await fetch("/api/admin/newsletter")
+    setSubs(await res.json())
+  }
+
+  async function handleDelete(id) {
+    await fetch(`/api/admin/newsletter/${id}`, { method: "DELETE" })
+    setSubs(subs.filter((s) => s.id !== id))
+  }
 
   useEffect(() => {
-    async function loadSubs() {
-      const data = await getSubscribers()
-      setSubs(data)
-      setLoading(false)
-    }
     loadSubs()
   }, [])
 
-  const handleDelete = async (id) => {
-    const ok = confirm("Delete this subscriber?")
-    if (!ok) return
-    await deleteSubscriber(id)
-    setSubs((prev) => prev.filter((s) => s.id !== id))
-  }
-
-  if (loading) return <p>Loading subscribers...</p>
-
   return (
-    <section className="space-y-6">
-      <h1 className="text-2xl font-bold">Newsletter Subscribers</h1>
-      {subs.length === 0 ? (
-        <p>No subscribers yet.</p>
-      ) : (
-        <ul className="space-y-2">
-          {subs.map((s) => (
-            <li key={s.id} className="flex justify-between p-2 border rounded-md">
-              <span>{s.email}</span>
-              <button
-                onClick={() => handleDelete(s.id)}
-                className="px-2 py-1 bg-red-600 text-white rounded-md text-sm"
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+    <section>
+      <h1 className="text-2xl font-bold">Manage Newsletter Subscribers</h1>
+      <ul className="mt-6 space-y-2">
+        {subs.map((s) => (
+          <li key={s.id} className="flex justify-between items-center border p-3 rounded-md">
+            <span>{s.email}</span>
+            <button
+              className="bg-red-600 text-white px-2 py-1 rounded"
+              onClick={() => handleDelete(s.id)}
+            >
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
     </section>
   )
 }
