@@ -1,14 +1,15 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Card } from "@/shared/ui/Card"
-import { Heading } from "@/shared/ui/Heading"
-import { Button } from "@/shared/ui/Button"
+import CardComponent from "@/shared/ui/Card"
+import ButtonComponent from "@/shared/ui/Button"
+import Heading from "@/shared/ui/Heading"
 import {
   getCustomers,
   getSubscriptions,
   updateSubscription,
 } from "@/features/billing/service"
+
 
 export default function BillingPage() {
   const [customers, setCustomers] = useState([])
@@ -41,7 +42,7 @@ export default function BillingPage() {
       <Heading level={1}>Billing Management</Heading>
 
       {/* Customers */}
-      <Card>
+      <CardComponent>
         <Heading level={2}>Customers</Heading>
         {customers.length === 0 ? (
           <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -67,10 +68,10 @@ export default function BillingPage() {
             </tbody>
           </table>
         )}
-      </Card>
+      </CardComponent>
 
       {/* Subscriptions */}
-      <Card>
+      <CardComponent>
         <Heading level={2}>Subscriptions</Heading>
         {subscriptions.length === 0 ? (
           <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -101,27 +102,27 @@ export default function BillingPage() {
                       : "-"}
                   </td>
                   <td className="space-x-2">
-                    <Button
+                    <ButtonComponent
                       variant="danger"
                       size="sm"
                       onClick={() => handleAction(s.id, "cancel")}
                     >
                       Cancel
-                    </Button>
-                    <Button
+                    </ButtonComponent>
+                    <ButtonComponent
                       variant="secondary"
                       size="sm"
                       onClick={() => handleAction(s.id, "refresh")}
                     >
                       Refresh
-                    </Button>
+                    </ButtonComponent>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
-      </Card>
+      </CardComponent>
     </div>
   )
 }

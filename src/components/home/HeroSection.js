@@ -1,5 +1,6 @@
+import ButtonComponent from "@/shared/ui/Button"
 import Heading from "@/shared/ui/Heading"
-import Button from "@/shared/ui/Button"
+// import Button from "@/shared/ui/Button"
 import Link from "next/link"
 
 export default function HeroSection() {
@@ -14,9 +15,9 @@ export default function HeroSection() {
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                 Sharing posts, projects, and ideas about web development, design, and beyond.
             </p>
-            <Button variant="primary" asChild>
+            <ButtonComponent variant="outline" asChild>
                 <Link href="/blog">Explore the Blog</Link>
-            </Button>
+            </ButtonComponent>
         </section>
     )
 }

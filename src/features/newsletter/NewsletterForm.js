@@ -36,7 +36,7 @@ export default function NewsletterForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col sm:flex-row gap-3 items-center justify-center"
+      className="flex flex-col sm:flex-row gap-4 items-center justify-center"
     >
       {/* Email Input */}
       <input
@@ -45,13 +45,13 @@ export default function NewsletterForm() {
         placeholder="Enter your email..."
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="flex-1 w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+        className="flex-1 w-full px-4 py-3 rounded-xl border border-white/20 bg-white/10 text-white placeholder-white/60 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition duration-200"
       />
 
       {/* Subscribe Button */}
       <button
         type="submit"
-        className="px-6 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition shadow-md"
+        className="px-6 py-3 rounded-xl bg-indigo-500 text-white font-semibold hover:bg-indigo-600 active:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 transition duration-200 shadow-lg"
       >
         Subscribe
       </button>
@@ -59,8 +59,8 @@ export default function NewsletterForm() {
       {/* Status Message */}
       {status && (
         <p
-          className={`w-full text-center text-sm mt-3 sm:mt-0 sm:ml-3 ${
-            status === "success" ? "text-green-600" : "text-red-600"
+          className={`w-full text-center text-sm mt-3 sm:mt-0 sm:ml-4 transition-opacity duration-300 ${
+            status === "success" ? "text-green-400" : "text-red-400"
           }`}
         >
           {message}
