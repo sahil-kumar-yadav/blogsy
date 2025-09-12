@@ -1,10 +1,13 @@
+// src/app/api/billing/webhook/route.js
 import { NextResponse } from "next/server"
 import Stripe from "stripe"
-import prisma from "@/core/db/prisma"
+import supabaseServer from "@/core/supabase/server"
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2023-10-16",
+})
 
-// Needed for raw body parsing
+// Stripe requires the raw body for signature verification
 export const config = {
   api: {
     bodyParser: false,
@@ -12,67 +15,68 @@ export const config = {
 }
 
 export async function POST(req) {
-  const rawBody = await req.text()
+  const body = await req.text()
   const sig = req.headers.get("stripe-signature")
 
   let event
   try {
     event = stripe.webhooks.constructEvent(
-      rawBody,
+      body,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
     )
   } catch (err) {
-    console.error("Webhook signature verification failed.", err.message)
-    return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
+    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 })
   }
+
+  const supabase = supabaseServer()
 
   try {
     switch (event.type) {
+      case "customer.created": {
+        const customer = event.data.object
+        await supabase.from("customers").upsert({
+          stripe_id: customer.id,
+          email: customer.email,
+        })
+        break
+      }
+
+      case "customer.updated": {
+        const customer = event.data.object
+        await supabase.from("customers").update({
+          email: customer.email,
+        }).eq("stripe_id", customer.id)
+        break
+      }
+
       case "customer.subscription.created":
       case "customer.subscription.updated": {
         const subscription = event.data.object
-        await prisma.subscription.upsert({
-          where: { stripeId: subscription.id },
-          update: {
-            status: subscription.status,
-            currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-          },
-          create: {
-            stripeId: subscription.id,
-            status: subscription.status,
-            priceId: subscription.items.data[0].price.id,
-            currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-            customer: {
-              connectOrCreate: {
-                where: { stripeId: subscription.customer },
-                create: {
-                  stripeId: subscription.customer,
-                  email: subscription.customer_email || "unknown@example.com",
-                },
-              },
-            },
-          },
+        await supabase.from("subscriptions").upsert({
+          stripe_id: subscription.id,
+          status: subscription.status,
+          price_id: subscription.items.data[0].price.id,
+          current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+          customer_stripe_id: subscription.customer, // link to customers table
         })
         break
       }
 
       case "customer.subscription.deleted": {
         const subscription = event.data.object
-        await prisma.subscription.updateMany({
-          where: { stripeId: subscription.id },
-          data: { status: "canceled" },
-        })
+        await supabase.from("subscriptions").update({
+          status: "canceled",
+        }).eq("stripe_id", subscription.id)
         break
       }
 
       default:
         console.log(`Unhandled event type ${event.type}`)
     }
-  } catch (err) {
-    console.error("Error handling webhook:", err)
-    return NextResponse.json({ error: "Webhook handling failed" }, { status: 500 })
-  }
 
-  return NextResponse.json({ received: true })
+    return NextResponse.json({ received: true })
+  } catch (err) {
+    return NextResponse.json({ error: err.message }, { status: 500 })
+  }
 }

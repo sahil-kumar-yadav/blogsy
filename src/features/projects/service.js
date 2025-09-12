@@ -11,8 +11,8 @@ export async function getProjects() {
   return data || []
 }
 
-// Get single project by ID
-export async function getProject(id) {
+// Get project by ID
+export async function getProjectById(id) {
   const { data, error } = await supabase
     .from("projects")
     .select("*")

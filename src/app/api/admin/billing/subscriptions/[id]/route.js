@@ -1,46 +1,73 @@
+// src/app/api/admin/billing/subscriptions/[id]/route.js
 import { NextResponse } from "next/server"
-import prisma from "@/core/db/prisma"
+import supabaseServer from "@/core/supabase/server"
 import Stripe from "stripe"
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2023-10-16",
+})
 
+// PATCH /api/admin/billing/subscriptions/[id]
+// Body: { action: "cancel" | "refresh" }
 export async function PATCH(req, { params }) {
-    const { id } = params
-    const { action } = await req.json()
+  const { id } = params
+  const supabase = supabaseServer()
+  const { action } = await req.json()
 
-    const subscription = await prisma.subscription.findUnique({ where: { id } })
-    if (!subscription) {
-        return NextResponse.json({ error: "Not found" }, { status: 404 })
-    }
+  // Find subscription in Supabase
+  const { data: subscription, error: subError } = await supabase
+    .from("subscriptions")
+    .select("*")
+    .eq("id", id)
+    .single()
 
+  if (subError || !subscription) {
+    return NextResponse.json(
+      { error: subError?.message || "Subscription not found" },
+      { status: 404 }
+    )
+  }
+
+  try {
     if (action === "cancel") {
-        // Cancel on Stripe
-        await stripe.subscriptions.update(subscription.stripeId, { cancel_at_period_end: true })
+      // Cancel in Stripe
+      await stripe.subscriptions.update(subscription.stripe_id, {
+        cancel_at_period_end: true,
+      })
 
-        // Update local DB
-        await prisma.subscription.update({
-            where: { id },
-            data: { status: "canceled" },
-        })
+      // Update in Supabase
+      const { data, error } = await supabase
+        .from("subscriptions")
+        .update({ status: "canceled" })
+        .eq("id", id)
+        .select()
+        .single()
 
-        return NextResponse.json({ success: true })
+      if (error) throw error
+      return NextResponse.json(data)
     }
 
     if (action === "refresh") {
-        const stripeSub = await stripe.subscriptions.retrieve(subscription.stripeId, {
-            expand: ["customer"],
-        })
+      // Pull latest from Stripe
+      const latest = await stripe.subscriptions.retrieve(subscription.stripe_id)
 
-        await prisma.subscription.update({
-            where: { id },
-            data: {
-                status: stripeSub.status,
-                currentPeriodEnd: new Date(stripeSub.current_period_end * 1000),
-            },
+      const { data, error } = await supabase
+        .from("subscriptions")
+        .update({
+          status: latest.status,
+          price_id: latest.items.data[0].price.id,
+          current_period_end: new Date(latest.current_period_end * 1000).toISOString(),
         })
+        .eq("id", id)
+        .select()
+        .single()
 
-        return NextResponse.json({ success: true })
+      if (error) throw error
+      return NextResponse.json(data)
     }
 
-    return NextResponse.json({ error: "Invalid action" }, { status: 400 })
+    return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 })
+  } catch (err) {
+    return NextResponse.json({ error: err.message }, { status: 500 })
+  }
 }

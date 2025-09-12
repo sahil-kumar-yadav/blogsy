@@ -1,61 +1,42 @@
-"use client"
+import { getProjectById } from "@/features/projects/service";
+import ButtonComponent from "@/shared/ui/Button";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { getProjects } from "@/features/projects/service"
-import ButtonComponent from "@/shared/ui/Button"
+export default async function ProjectDetail({ params: rawParams }) {
+    const params = await rawParams;
+    const project = await getProjectById(params.id);
 
-export default function PublicProjects() {
-  const [projects, setProjects] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function loadProjects() {
-      const data = await getProjects()
-      setProjects(data)
-      setLoading(false)
+    if (!project) {
+        return (
+            <section className="py-20 text-center text-gray-400">
+                <p className="text-xl italic">Project not found.</p>
+            </section>
+        );
     }
-    loadProjects()
-  }, [])
 
-  if (loading) {
-    return <p className="text-gray-600 dark:text-gray-400">Loading projects...</p>
-  }
+    return (
+        <section className="relative px-8 py-20 max-w-5xl mx-auto space-y-12 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.4)] text-white">
+            {/* Decorative glow accents */}
+            <div className="absolute -top-20 -left-20 w-60 h-60 bg-indigo-500/30 rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-20 -right-20 w-48 h-48 bg-blue-400/30 rounded-full blur-2xl"></div>
 
-  return (
-    <section className="space-y-6">
-      <h1 className="text-2xl font-bold">Projects</h1>
+            {/* Project Title */}
+            <h1 className="text-5xl font-extrabold tracking-tight text-indigo-300 drop-shadow-md text-center">
+                {project.name}
+            </h1>
 
-      {projects.length === 0 ? (
-        <p className="text-gray-600 dark:text-gray-400">
-          No projects have been added yet.
-        </p>
-      ) : (
-        <ul className="space-y-2">
-          {projects.map((project) => (
-            <li
-              key={project.id}
-              className="p-4 border rounded-md dark:border-gray-700"
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="font-semibold">{project.name}</h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {project.description}
-                  </p>
-                </div>
-                <div>
-                  <Link href={`/projects/${project.id}`}>
-                    <ButtonComponent variant="secondary" size="sm">
-                      View
+            {/* Project Description */}
+            <p className="text-lg leading-relaxed text-gray-300 text-center max-w-3xl mx-auto">
+                {project.description}
+            </p>
+
+            {/* Project Link */}
+            {(project.url || true) && (
+                <div className="text-center">
+                    <ButtonComponent variant="secondary">
+                        🚀 Visit Project
                     </ButtonComponent>
-                  </Link>
                 </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
-  )
+            )}
+        </section>
+    );
 }
