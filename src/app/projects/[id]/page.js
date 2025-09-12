@@ -1,14 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { getProjects } from "@/features/projects/service"
 import ButtonComponent from "@/shared/ui/Button"
 
 export default function PublicProjects() {
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
-  const router = useRouter()
 
   useEffect(() => {
     async function loadProjects() {
@@ -46,13 +45,11 @@ export default function PublicProjects() {
                   </p>
                 </div>
                 <div>
-                  <ButtonComponent
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => router.push(`/projects/${project.id}`)}
-                  >
-                    View
-                  </ButtonComponent>
+                  <Link href={`/projects/${project.id}`}>
+                    <ButtonComponent variant="secondary" size="sm">
+                      View
+                    </ButtonComponent>
+                  </Link>
                 </div>
               </div>
             </li>
