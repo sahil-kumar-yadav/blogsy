@@ -1,7 +1,7 @@
 "use client"
 import { useRouter, useParams } from "next/navigation"
 import { useState, useEffect } from "react"
-import { getProject, updateProject } from "@/features/projects/service"
+import { getProjects, updateProject } from "@/features/projects/service"
 
 export default function EditProjectPage() {
   const router = useRouter()
@@ -11,7 +11,7 @@ export default function EditProjectPage() {
 
   useEffect(() => {
     async function loadProject() {
-      const data = await getProject(projectId)
+      const data = await getProjects(projectId)
       setProject(data)
     }
     loadProject()
