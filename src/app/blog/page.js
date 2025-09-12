@@ -1,6 +1,6 @@
 import Link from "next/link"
-import Heading from "@/shared/ui/Heading"
-import Card from "@/shared/ui/Card"
+import Heading from "@/components/shared/Heading"
+import Card from "@/components/shared/Card"
 import { getPosts } from "@/features/posts/service"
 
 export const metadata = {

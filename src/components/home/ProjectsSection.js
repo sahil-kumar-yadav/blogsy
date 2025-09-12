@@ -1,6 +1,6 @@
-import Heading from "@/shared/ui/Heading"
-import Card from "@/shared/ui/Card"
-import Button from "@/shared/ui/Button"
+import Heading from "@/components/shared/Heading"
+import Card from "@/components/shared/Card"
+import Button from "@/components/shared/Button"
 import Link from "next/link"
 
 export default function ProjectsSection({ projects }) {

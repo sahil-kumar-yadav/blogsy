@@ -1,4 +1,4 @@
-import Heading from "@/shared/ui/Heading";
+import Heading from "@/components/shared/Heading";
 import NewsletterForm from "@/features/newsletter/NewsletterForm";
 
 export default function NewsletterSection() {

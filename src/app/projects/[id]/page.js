@@ -1,5 +1,5 @@
 import { getProjectById } from "@/features/projects/service";
-import ButtonComponent from "@/shared/ui/Button";
+import ButtonComponent from "@/components/shared/Button";
 
 export default async function ProjectDetail({ params: rawParams }) {
     const params = await rawParams;

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { getProjects } from "@/features/projects/service"
-import ButtonComponent from "@/shared/ui/Button"
+import ButtonComponent from "@/components/shared/Button"
 
 export default function PublicProjects() {
   const [projects, setProjects] = useState([])

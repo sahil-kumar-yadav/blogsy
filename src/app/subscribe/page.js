@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Heading from "@/shared/ui/Heading";
+import Heading from "@/components/shared/Heading";
 import PricingTable from "@/features/billing/PricingTable";
 
 export default function SubscribePage() {

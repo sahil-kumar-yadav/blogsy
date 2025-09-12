@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import Button from "@/shared/ui/Button";
+import Button from "@/components/shared/Button";
 
 export default function PricingTable({ products }) {
   const [loading, setLoading] = useState(false);

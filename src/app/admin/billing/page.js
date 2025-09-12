@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import CardComponent from "@/shared/ui/Card"
-import ButtonComponent from "@/shared/ui/Button"
-import Heading from "@/shared/ui/Heading"
+import CardComponent from "@/components/shared/Card"
+import ButtonComponent from "@/components/shared/Button"
+import Heading from "@/components/shared/Heading"
 import {
   getCustomers,
   getSubscriptions,

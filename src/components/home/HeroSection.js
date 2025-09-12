@@ -1,5 +1,5 @@
-import ButtonComponent from "@/shared/ui/Button"
-import Heading from "@/shared/ui/Heading"
+import ButtonComponent from "@/components/shared/Button"
+import Heading from "@/components/shared/Heading"
 // import Button from "@/shared/ui/Button"
 import Link from "next/link"
 

@@ -1,5 +1,5 @@
-import Heading from "@/shared/ui/Heading"
-import Card from "@/shared/ui/Card"
+import Heading from "@/components/shared/Heading"
+import Card from "@/components/shared/Card"
 import SearchBar from "@/features/search/SearchBar"
 
 export default function SearchSection() {

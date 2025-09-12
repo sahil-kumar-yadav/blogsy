@@ -2,8 +2,8 @@ import { notFound, redirect } from "next/navigation"
 import CommentsSection from "@/features/comments/CommentsSection"
 import { userHasActiveSubscription } from "@/features/billing/service"
 import { getPostBySlug } from "@/features/posts/service"
-import Heading from "@/shared/ui/Heading"
-import Card from "@/shared/ui/Card"
+import Heading from "@/components/shared/Heading"
+import Card from "@/components/shared/Card"
 import Link from "next/link"
 
 export default async function BlogPostPage({ params }) {
