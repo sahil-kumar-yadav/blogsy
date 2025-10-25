@@ -1,5 +1,5 @@
 # 📝 Next.js Scalable Blog & SaaS Platform
-
+![alt text](<public/project-image/image copy.png>)
 A modern, **scalable blog and project showcase** built with **Next.js App Router**, **Prisma + PostgreSQL**, and **Stripe** — designed to evolve from a personal blog into a full SaaS-style platform with subscriptions, admin tools, and premium content.
 
 ---
@@ -36,6 +36,8 @@ A modern, **scalable blog and project showcase** built with **Next.js App Router
 * **Scalable API layer** with Next.js route handlers
 * **Prisma ORM** for type-safe DB queries
 * **Beautiful UI** using TailwindCSS + shared UI components (`Heading`, `Card`, `Button`)
+
+![alt text](public/project-image/image.png)
 
 ---
 
